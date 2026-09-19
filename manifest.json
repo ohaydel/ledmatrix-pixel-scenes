@@ -1,0 +1,22 @@
+{
+  "id": "pixel-scenes",
+  "name": "Pixel Scenes",
+  "version": "0.1.0",
+  "author": "Oren",
+  "description": "Animated pixel-art scenes designed for 128x32 LED matrices",
+  "category": "visual",
+  "tags": [
+    "animation",
+    "pixel-art",
+    "retro",
+    "visual"
+  ],
+  "entry_point": "manager.py",
+  "class_name": "PixelScenes",
+  "display_modes": [
+    "pixel-scenes"
+  ],
+  "compatible_versions": [
+    ">=2.0.0"
+  ]
+}

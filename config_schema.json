@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pixel Scenes Configuration",
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable Pixel Scenes"
+    },
+    "display_duration": {
+      "type": "number",
+      "default": 20,
+      "minimum": 5,
+      "maximum": 300,
+      "description": "How long to display the scene"
+    },
+    "animation_speed": {
+      "type": "number",
+      "default": 1.0,
+      "minimum": 0.25,
+      "maximum": 4.0,
+      "description": "Animation speed multiplier"
+    }
+  },
+  "required": ["enabled"],
+  "additionalProperties": false
+}

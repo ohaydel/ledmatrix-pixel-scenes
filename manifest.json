@@ -1,7 +1,7 @@
 {
   "id": "pixel-scenes",
   "name": "Pixel Scenes",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Oren",
   "description": "Animated pixel-art scenes designed for 128x32 LED matrices",
   "category": "visual",

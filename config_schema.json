@@ -1,11 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Pixel Scenes Configuration",
   "type": "object",
   "properties": {
     "enabled": {
       "type": "boolean",
-      "default": false,
+      "default": true,
       "description": "Enable Pixel Scenes"
     },
     "display_duration": {
@@ -13,14 +11,46 @@
       "default": 20,
       "minimum": 5,
       "maximum": 300,
-      "description": "How long to display the scene"
+      "description": "Seconds Pixel Scenes remains on screen"
     },
     "animation_speed": {
       "type": "number",
       "default": 1.0,
       "minimum": 0.25,
       "maximum": 4.0,
-      "description": "Animation speed multiplier"
+      "description": "Overall animation speed"
+    },
+    "scene_mode": {
+      "type": "string",
+      "enum": [
+        "random",
+        "synthwave",
+        "lightning",
+        "arcade",
+        "mardi_gras"
+      ],
+      "default": "random",
+      "description": "Choose a specific scene or randomly select one each rotation"
+    },
+    "enable_synthwave": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Synthwave Horizon"
+    },
+    "enable_lightning": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Lightning Storm"
+    },
+    "enable_arcade": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Retro Arcade"
+    },
+    "enable_mardi_gras": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Mardi Gras"
     }
   },
   "required": ["enabled"],

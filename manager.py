@@ -9,7 +9,13 @@ from src.plugin_system.base_plugin import BasePlugin
 class PixelScenes(BasePlugin):
     """Animated pixel-art scenes for a 128x32 LED matrix."""
 
-    SCENES = ("synthwave", "lightning", "arcade", "mardi_gras")
+    SCENES = (
+        "synthwave",
+        "lightning",
+        "arcade",
+        "mardi_gras",
+        "american_flag",
+    )
 
     def __init__(
         self,
@@ -125,16 +131,16 @@ class PixelScenes(BasePlugin):
 
             now = time.time()
             t = (now - self.start_time) * self.animation_speed
-
-            if self.active_scene == "lightning":
-                self._draw_lightning(t, now)
-            elif self.active_scene == "arcade":
-                self._draw_arcade(t)
-            elif self.active_scene == "mardi_gras":
-                self._draw_mardi_gras(t)
-            else:
-                self._draw_synthwave(t)
-
+if self.active_scene == "lightning":
+    self._draw_lightning(t, now)
+elif self.active_scene == "arcade":
+    self._draw_arcade(t)
+elif self.active_scene == "mardi_gras":
+    self._draw_mardi_gras(t)
+elif self.active_scene == "american_flag":
+    self._draw_american_flag(t)
+else:
+    self._draw_synthwave(t)
             self.display_manager.update_display()
             return True
 
@@ -390,7 +396,106 @@ class PixelScenes(BasePlugin):
                 fill=gold,
             )
 
-    def get_display_duration(self):
+    # ----------------------------------------------------------
+    # AMERICAN FLAG
+    # ----------------------------------------------------------
+
+    def _draw_american_flag(self, t):
+        draw = self.display_manager.draw
+        w, h = self.width, self.height
+
+        red = (220, 20, 30)
+        white = (235, 235, 225)
+        blue = (20, 45, 130)
+
+        # 13 stripes compressed into the 32-pixel-high display.
+        for y in range(h):
+            stripe = int((y * 13) / h)
+            base_color = red if stripe % 2 == 0 else white
+
+            for x in range(w):
+                # Horizontal wave that becomes slightly stronger
+                # toward the fly end of the flag.
+                strength = 0.7 + (x / max(1, w - 1)) * 2.2
+                wave = int(
+                    math.sin((x * 0.13) - (t * 4.0)) * strength
+                )
+
+                source_y = y + wave
+
+                if source_y < 0 or source_y >= h:
+                    continue
+
+                source_stripe = int((source_y * 13) / h)
+                color = red if source_stripe % 2 == 0 else white
+
+                # Subtle moving highlight/shadow gives the flag
+                # a cloth-like appearance.
+                shade = math.sin((x * 0.13) - (t * 4.0))
+
+                if shade > 0.55:
+                    color = tuple(min(255, c + 18) for c in color)
+                elif shade < -0.55:
+                    color = tuple(max(0, c - 30) for c in color)
+
+                draw.point((x, y), fill=color)
+
+        # Blue canton: roughly traditional flag proportions,
+        # adapted to the tiny 128x32 canvas.
+        canton_w = int(w * 0.40)
+        canton_h = int(h * 0.54)
+
+        for y in range(canton_h):
+            for x in range(canton_w):
+                strength = 0.7 + (x / max(1, w - 1)) * 2.2
+                wave = int(
+                    math.sin((x * 0.13) - (t * 4.0)) * strength
+                )
+
+                yy = y + wave
+
+                if 0 <= yy < h:
+                    draw.point((x, yy), fill=blue)
+
+        # Pixel-star field.
+        #
+        # At 32 pixels high we cannot render recognizable 5-point
+        # stars at realistic scale, so bright pixels create the
+        # visual impression of the star field.
+        rows = 9
+
+        for row in range(rows):
+            stars = 6 if row % 2 == 0 else 5
+
+            for col in range(stars):
+                if stars == 6:
+                    sx = 4 + col * 8
+                else:
+                    sx = 8 + col * 8
+
+                sy = 2 + row * 2
+
+                if sx >= canton_w or sy >= canton_h:
+                    continue
+
+                strength = 0.7 + (sx / max(1, w - 1)) * 2.2
+                wave = int(
+                    math.sin((sx * 0.13) - (t * 4.0)) * strength
+                )
+
+                sy += wave
+
+                if 0 <= sy < h:
+                    draw.point((sx, sy), fill=(255, 255, 255))
+
+        # Dark left edge gives the impression that the flag
+        # is attached to a pole just outside the display.
+        draw.line((0, 0, 0, h - 1), fill=(80, 80, 80)) 
+
+
+
+
+   def get_display_duration(self):
         return self.display_duration
 
     def validate_config(self) -> bool:

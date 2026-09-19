@@ -28,6 +28,7 @@
         "lightning",
         "arcade",
         "mardi_gras"
+	"american_flag"
       ],
       "default": "random",
       "description": "Choose a specific scene or randomly select one each rotation"
@@ -52,7 +53,14 @@
       "default": true,
       "description": "Enable Mardi Gras"
     }
-  },
+    "enable_american_flag": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Animated American Flag"
+} 
+
+
+ },
   "required": ["enabled"],
   "additionalProperties": false
 }

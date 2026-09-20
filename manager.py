@@ -718,50 +718,116 @@ class PixelScenes(BasePlugin):
         draw = self.display_manager.draw
         w, h = self.width, self.height
 
-        red = (255, 0, 0)
-        blue = (0, 50, 255)
-        white = (255, 255, 255)
-        dark_red = (55, 0, 0)
-        dark_blue = (0, 10, 55)
+        RED = (255, 0, 0)
+        BLUE = (0, 70, 255)
+        WHITE = (255, 255, 255)
 
-        # Fast repeating light-bar sequence
-        phase = int(t * 8) % 8
+        DIM_RED = (35, 0, 0)
+        DIM_BLUE = (0, 8, 35)
+        HOUSING = (28, 28, 32)
 
-        left_on = phase in (0, 1, 3)
-        right_on = phase in (4, 5, 7)
-        center_flash = phase in (2, 6)
+        # ------------------------------------------------------
+        # Lightbar housing
+        # ------------------------------------------------------
+        bar_x1 = 5
+        bar_x2 = w - 6
+        bar_y1 = 8
+        bar_y2 = 23
 
         draw.rectangle(
-            (0, 0, w // 2 - 1, h - 1),
-            fill=red if left_on else dark_red,
-        )
-        draw.rectangle(
-            (w // 2, 0, w - 1, h - 1),
-            fill=blue if right_on else dark_blue,
+            (bar_x1, bar_y1, bar_x2, bar_y2),
+            fill=(3, 3, 5),
+            outline=HOUSING,
         )
 
-        # Light bar housings
-        bar_y1 = 9
-        bar_y2 = 22
+        # Individual LED modules.
+        #
+        # 5 red modules | center | 5 blue modules
+        module_w = 9
+        module_h = 9
+        gap = 2
 
-        draw.rectangle((5, bar_y1, w // 2 - 4, bar_y2), outline=white)
-        draw.rectangle((w // 2 + 3, bar_y1, w - 6, bar_y2), outline=white)
+        total_modules = 10
+        total_width = total_modules * module_w + 9 * gap
+        start_x = (w - total_width) // 2
+        module_y = 11
 
-        if left_on:
-            for x in range(9, w // 2 - 5, 10):
-                draw.rectangle((x, 12, x + 5, 19), fill=white)
+        # ------------------------------------------------------
+        # Flash pattern
+        #
+        # 0 red
+        # 1 dark
+        # 2 red
+        # 3 dark
+        # 4 blue
+        # 5 dark
+        # 6 blue
+        # 7 dark
+        # 8 red + blue
+        # 9 white takedown
+        # ------------------------------------------------------
+        phase = int(t * 12) % 10
 
-        if right_on:
-            for x in range(w // 2 + 8, w - 8, 10):
-                draw.rectangle((x, 12, x + 5, 19), fill=white)
+        red_on = phase in (0, 2, 8)
+        blue_on = phase in (4, 6, 8)
+        white_flash = phase == 9
 
-        if center_flash:
+        # Draw red side
+        for i in range(5):
+            x = start_x + i * (module_w + gap)
+
+            color = RED if red_on else DIM_RED
+
             draw.rectangle(
-                (w // 2 - 3, 5, w // 2 + 3, h - 6),
-                fill=white,
+                (x, module_y, x + module_w - 1, module_y + module_h - 1),
+                fill=color,
             )
 
+            # Bright LED core when flashing
+            if red_on:
+                draw.rectangle(
+                    (x + 2, module_y + 2,
+                     x + module_w - 3, module_y + module_h - 3),
+                    fill=WHITE if i in (1, 3) else RED,
+                )
 
+        # Draw blue side
+        for i in range(5):
+            index = i + 5
+            x = start_x + index * (module_w + gap)
+
+            color = BLUE if blue_on else DIM_BLUE
+
+            draw.rectangle(
+                (x, module_y, x + module_w - 1, module_y + module_h - 1),
+                fill=color,
+            )
+
+            if blue_on:
+                draw.rectangle(
+                    (x + 2, module_y + 2,
+                     x + module_w - 3, module_y + module_h - 3),
+                    fill=WHITE if i in (1, 3) else BLUE,
+                )
+
+        # ------------------------------------------------------
+        # White takedown flash
+        # ------------------------------------------------------
+        if white_flash:
+            draw.rectangle(
+                (w // 2 - 14, 10, w // 2 - 7, 21),
+                fill=WHITE,
+            )
+            draw.rectangle(
+                (w // 2 + 7, 10, w // 2 + 14, 21),
+                fill=WHITE,
+            )
+
+        # Center divider
+        draw.line(
+            (w // 2, bar_y1 + 1, w // 2, bar_y2 - 1),
+            fill=(70, 70, 75),
+        )
     def get_display_duration(self):
         return self.display_duration
 
@@ -780,7 +846,7 @@ class PixelScenes(BasePlugin):
     def get_info(self) -> Dict[str, Any]:
         return {
             "name": "Pixel Scenes",
-            "version": "0.4.0",
+            "version": "0.4.1",
             "active_scene": self.active_scene or "not selected",
             "scene_mode": self.scene_mode,
             "resolution": f"{self.width}x{self.height}",

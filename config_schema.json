@@ -33,8 +33,7 @@
         "american_flag",
         "halloween",
         "christmas",
-        "lsu_game_day",
-        "emergency_lights"
+        "lsu_game_day"
       ],
       "default": "random",
       "description": "Choose a specific scene or randomly select one each rotation"
@@ -78,11 +77,6 @@
       "type": "boolean",
       "default": true,
       "description": "Enable LSU Game Day Scene"
-    },
-    "enable_emergency_lights": {
-      "type": "boolean",
-      "default": true,
-      "description": "Enable Emergency Lights Scene"
     }
   },
   "required": [

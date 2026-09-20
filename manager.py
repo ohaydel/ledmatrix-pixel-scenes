@@ -18,7 +18,6 @@ class PixelScenes(BasePlugin):
         "halloween",
         "christmas",
         "lsu_game_day",
-        "emergency_lights",
     )
 
     def __init__(
@@ -149,8 +148,6 @@ class PixelScenes(BasePlugin):
                 self._draw_christmas(t)
             elif self.active_scene == "lsu_game_day":
                 self._draw_lsu_game_day(t)
-            elif self.active_scene == "emergency_lights":
-                self._draw_emergency_lights(t)
             else:
                 self._draw_synthwave(t)
             self.display_manager.update_display()
@@ -710,124 +707,7 @@ class PixelScenes(BasePlugin):
         draw.rectangle((w - 6, h - 6, w - 3, h - 3), fill=pulse)
 
 
-    # ----------------------------------------------------------
-    # EMERGENCY LIGHTS
-    # ----------------------------------------------------------
 
-    def _draw_emergency_lights(self, t):
-        draw = self.display_manager.draw
-        w, h = self.width, self.height
-
-        RED = (255, 0, 0)
-        BLUE = (0, 70, 255)
-        WHITE = (255, 255, 255)
-
-        DIM_RED = (35, 0, 0)
-        DIM_BLUE = (0, 8, 35)
-        HOUSING = (28, 28, 32)
-
-        # ------------------------------------------------------
-        # Lightbar housing
-        # ------------------------------------------------------
-        bar_x1 = 5
-        bar_x2 = w - 6
-        bar_y1 = 8
-        bar_y2 = 23
-
-        draw.rectangle(
-            (bar_x1, bar_y1, bar_x2, bar_y2),
-            fill=(3, 3, 5),
-            outline=HOUSING,
-        )
-
-        # Individual LED modules.
-        #
-        # 5 red modules | center | 5 blue modules
-        module_w = 9
-        module_h = 9
-        gap = 2
-
-        total_modules = 10
-        total_width = total_modules * module_w + 9 * gap
-        start_x = (w - total_width) // 2
-        module_y = 11
-
-        # ------------------------------------------------------
-        # Flash pattern
-        #
-        # 0 red
-        # 1 dark
-        # 2 red
-        # 3 dark
-        # 4 blue
-        # 5 dark
-        # 6 blue
-        # 7 dark
-        # 8 red + blue
-        # 9 white takedown
-        # ------------------------------------------------------
-        phase = int(t * 12) % 10
-
-        red_on = phase in (0, 2, 8)
-        blue_on = phase in (4, 6, 8)
-        white_flash = phase == 9
-
-        # Draw red side
-        for i in range(5):
-            x = start_x + i * (module_w + gap)
-
-            color = RED if red_on else DIM_RED
-
-            draw.rectangle(
-                (x, module_y, x + module_w - 1, module_y + module_h - 1),
-                fill=color,
-            )
-
-            # Bright LED core when flashing
-            if red_on:
-                draw.rectangle(
-                    (x + 2, module_y + 2,
-                     x + module_w - 3, module_y + module_h - 3),
-                    fill=WHITE if i in (1, 3) else RED,
-                )
-
-        # Draw blue side
-        for i in range(5):
-            index = i + 5
-            x = start_x + index * (module_w + gap)
-
-            color = BLUE if blue_on else DIM_BLUE
-
-            draw.rectangle(
-                (x, module_y, x + module_w - 1, module_y + module_h - 1),
-                fill=color,
-            )
-
-            if blue_on:
-                draw.rectangle(
-                    (x + 2, module_y + 2,
-                     x + module_w - 3, module_y + module_h - 3),
-                    fill=WHITE if i in (1, 3) else BLUE,
-                )
-
-        # ------------------------------------------------------
-        # White takedown flash
-        # ------------------------------------------------------
-        if white_flash:
-            draw.rectangle(
-                (w // 2 - 14, 10, w // 2 - 7, 21),
-                fill=WHITE,
-            )
-            draw.rectangle(
-                (w // 2 + 7, 10, w // 2 + 14, 21),
-                fill=WHITE,
-            )
-
-        # Center divider
-        draw.line(
-            (w // 2, bar_y1 + 1, w // 2, bar_y2 - 1),
-            fill=(70, 70, 75),
-        )
     def get_display_duration(self):
         return self.display_duration
 

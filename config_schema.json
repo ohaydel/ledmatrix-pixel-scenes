@@ -30,7 +30,11 @@
         "lightning",
         "arcade",
         "mardi_gras",
-        "american_flag"
+        "american_flag",
+        "halloween",
+        "christmas",
+        "lsu_game_day",
+        "emergency_lights"
       ],
       "default": "random",
       "description": "Choose a specific scene or randomly select one each rotation"
@@ -59,6 +63,26 @@
       "type": "boolean",
       "default": true,
       "description": "Enable Animated American Flag"
+    },
+    "enable_halloween": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Halloween Scene"
+    },
+    "enable_christmas": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Christmas Scene"
+    },
+    "enable_lsu_game_day": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable LSU Game Day Scene"
+    },
+    "enable_emergency_lights": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable Emergency Lights Scene"
     }
   },
   "required": [

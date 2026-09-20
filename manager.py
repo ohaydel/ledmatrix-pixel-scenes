@@ -15,6 +15,10 @@ class PixelScenes(BasePlugin):
         "arcade",
         "mardi_gras",
         "american_flag",
+        "halloween",
+        "christmas",
+        "lsu_game_day",
+        "emergency_lights",
     )
 
     def __init__(
@@ -139,6 +143,14 @@ class PixelScenes(BasePlugin):
                 self._draw_mardi_gras(t)
             elif self.active_scene == "american_flag":
                 self._draw_american_flag(t)
+            elif self.active_scene == "halloween":
+                self._draw_halloween(t)
+            elif self.active_scene == "christmas":
+                self._draw_christmas(t)
+            elif self.active_scene == "lsu_game_day":
+                self._draw_lsu_game_day(t)
+            elif self.active_scene == "emergency_lights":
+                self._draw_emergency_lights(t)
             else:
                 self._draw_synthwave(t)
             self.display_manager.update_display()
@@ -495,6 +507,261 @@ class PixelScenes(BasePlugin):
 
 
 
+
+    # ----------------------------------------------------------
+    # HALLOWEEN
+    # ----------------------------------------------------------
+
+    def _draw_halloween(self, t):
+        draw = self.display_manager.draw
+        w, h = self.width, self.height
+
+        orange = (255, 90, 0)
+        yellow = (255, 210, 30)
+        purple = (90, 20, 130)
+        white = (220, 220, 230)
+
+        # Moon
+        draw.ellipse((w - 25, 2, w - 10, 17), fill=(150, 150, 110))
+        draw.ellipse((w - 21, 1, w - 8, 14), fill=(0, 0, 0))
+
+        # Drifting stars
+        for i in range(15):
+            x = (i * 23 + int(t * 3)) % w
+            y = 2 + ((i * 7) % 12)
+            draw.point((x, y), fill=purple)
+
+        # Pumpkin
+        cx = w // 2
+        cy = 20
+
+        draw.ellipse((cx - 13, cy - 8, cx + 13, cy + 8), fill=orange)
+        draw.ellipse((cx - 9, cy - 8, cx + 9, cy + 8), outline=(180, 45, 0))
+        draw.rectangle((cx - 2, cy - 12, cx + 2, cy - 8), fill=(40, 130, 40))
+
+        # Eyes
+        draw.polygon(
+            [(cx - 8, cy - 3), (cx - 3, cy - 3), (cx - 5, cy + 1)],
+            fill=yellow,
+        )
+        draw.polygon(
+            [(cx + 3, cy - 3), (cx + 8, cy - 3), (cx + 5, cy + 1)],
+            fill=yellow,
+        )
+
+        # Animated mouth
+        glow = yellow if int(t * 4) % 2 == 0 else (180, 80, 0)
+
+        for x in range(cx - 8, cx + 9, 4):
+            draw.rectangle((x, cy + 4, x + 2, cy + 6), fill=glow)
+
+        # Ghost drifting across display
+        gx = int((t * 15) % (w + 25)) - 12
+        gy = 8 + int(math.sin(t * 2) * 3)
+
+        draw.ellipse((gx - 5, gy - 5, gx + 5, gy + 5), fill=white)
+        draw.rectangle((gx - 5, gy, gx + 5, gy + 6), fill=white)
+
+        draw.point((gx - 2, gy - 1), fill=(0, 0, 0))
+        draw.point((gx + 2, gy - 1), fill=(0, 0, 0))
+
+
+    # ----------------------------------------------------------
+    # CHRISTMAS
+    # ----------------------------------------------------------
+
+    def _draw_christmas(self, t):
+        draw = self.display_manager.draw
+        w, h = self.width, self.height
+
+        # Snow
+        for i in range(32):
+            x = (i * 31 + int(math.sin(t + i) * 5)) % w
+            y = int((i * 11 + t * (4 + i % 3)) % h)
+            draw.point((x, y), fill=(180, 210, 255))
+
+        # Ground snow
+        draw.rectangle((0, h - 4, w - 1, h - 1), fill=(180, 210, 230))
+
+        cx = w // 2
+
+        # Tree
+        draw.polygon(
+            [(cx, 3), (cx - 10, 17), (cx + 10, 17)],
+            fill=(20, 130, 45),
+        )
+        draw.polygon(
+            [(cx, 8), (cx - 15, 24), (cx + 15, 24)],
+            fill=(15, 110, 35),
+        )
+        draw.rectangle((cx - 2, 24, cx + 2, 29), fill=(110, 60, 20))
+
+        # Star
+        star = (255, 220, 40)
+        draw.point((cx, 1), fill=star)
+        draw.line((cx - 2, 3, cx + 2, 3), fill=star)
+        draw.line((cx, 1, cx, 5), fill=star)
+
+        # Blinking lights
+        colors = [
+            (255, 30, 30),
+            (255, 210, 20),
+            (30, 100, 255),
+            (220, 30, 220),
+        ]
+
+        lights = [
+            (-4, 9), (4, 11),
+            (-8, 15), (0, 15), (8, 16),
+            (-11, 21), (-4, 20), (4, 22), (11, 20),
+        ]
+
+        phase = int(t * 4)
+
+        for i, (dx, dy) in enumerate(lights):
+            color = colors[(i + phase) % len(colors)]
+            draw.rectangle(
+                (cx + dx, dy, cx + dx + 1, dy + 1),
+                fill=color,
+            )
+
+
+    # ----------------------------------------------------------
+    # LSU GAME DAY
+    # ----------------------------------------------------------
+
+    def _draw_lsu_game_day(self, t):
+        draw = self.display_manager.draw
+        w, h = self.width, self.height
+
+        purple = (70, 20, 120)
+        gold = (255, 190, 20)
+        white = (245, 245, 245)
+
+        # Animated purple/gold background bands
+        offset = int(t * 20) % 32
+
+        for x in range(-32, w + 32, 32):
+            xx = x + offset
+            draw.polygon(
+                [(xx, 0), (xx + 16, 0), (xx - 2, h - 1), (xx - 18, h - 1)],
+                fill=purple,
+            )
+            draw.polygon(
+                [(xx + 16, 0), (xx + 32, 0), (xx + 14, h - 1), (xx - 2, h - 1)],
+                fill=gold,
+            )
+
+        # Dark center panel for readability
+        cx = w // 2
+        draw.rectangle((cx - 27, 5, cx + 27, 27), fill=(15, 5, 25))
+        draw.rectangle((cx - 27, 5, cx + 27, 27), outline=gold)
+
+        # Pixel LSU letters
+        patterns = {
+            "L": [
+                "100",
+                "100",
+                "100",
+                "100",
+                "111",
+            ],
+            "S": [
+                "111",
+                "100",
+                "111",
+                "001",
+                "111",
+            ],
+            "U": [
+                "101",
+                "101",
+                "101",
+                "101",
+                "111",
+            ],
+        }
+
+        scale = 3
+        letter_width = 3 * scale
+        spacing = 3
+        total_width = letter_width * 3 + spacing * 2
+        start_x = cx - total_width // 2
+        start_y = 8
+
+        for letter_index, letter in enumerate(("L", "S", "U")):
+            ox = start_x + letter_index * (letter_width + spacing)
+
+            for row, pattern in enumerate(patterns[letter]):
+                for col, bit in enumerate(pattern):
+                    if bit == "1":
+                        x1 = ox + col * scale
+                        y1 = start_y + row * scale
+                        draw.rectangle(
+                            (x1, y1, x1 + scale - 1, y1 + scale - 1),
+                            fill=gold if letter_index != 1 else white,
+                        )
+
+        # Pulsing corner pixels
+        pulse = gold if int(t * 5) % 2 == 0 else purple
+        draw.rectangle((2, 2, 5, 5), fill=pulse)
+        draw.rectangle((w - 6, 2, w - 3, 5), fill=pulse)
+        draw.rectangle((2, h - 6, 5, h - 3), fill=pulse)
+        draw.rectangle((w - 6, h - 6, w - 3, h - 3), fill=pulse)
+
+
+    # ----------------------------------------------------------
+    # EMERGENCY LIGHTS
+    # ----------------------------------------------------------
+
+    def _draw_emergency_lights(self, t):
+        draw = self.display_manager.draw
+        w, h = self.width, self.height
+
+        red = (255, 0, 0)
+        blue = (0, 50, 255)
+        white = (255, 255, 255)
+        dark_red = (55, 0, 0)
+        dark_blue = (0, 10, 55)
+
+        # Fast repeating light-bar sequence
+        phase = int(t * 8) % 8
+
+        left_on = phase in (0, 1, 3)
+        right_on = phase in (4, 5, 7)
+        center_flash = phase in (2, 6)
+
+        draw.rectangle(
+            (0, 0, w // 2 - 1, h - 1),
+            fill=red if left_on else dark_red,
+        )
+        draw.rectangle(
+            (w // 2, 0, w - 1, h - 1),
+            fill=blue if right_on else dark_blue,
+        )
+
+        # Light bar housings
+        bar_y1 = 9
+        bar_y2 = 22
+
+        draw.rectangle((5, bar_y1, w // 2 - 4, bar_y2), outline=white)
+        draw.rectangle((w // 2 + 3, bar_y1, w - 6, bar_y2), outline=white)
+
+        if left_on:
+            for x in range(9, w // 2 - 5, 10):
+                draw.rectangle((x, 12, x + 5, 19), fill=white)
+
+        if right_on:
+            for x in range(w // 2 + 8, w - 8, 10):
+                draw.rectangle((x, 12, x + 5, 19), fill=white)
+
+        if center_flash:
+            draw.rectangle(
+                (w // 2 - 3, 5, w // 2 + 3, h - 6),
+                fill=white,
+            )
+
+
     def get_display_duration(self):
         return self.display_duration
 
@@ -513,7 +780,7 @@ class PixelScenes(BasePlugin):
     def get_info(self) -> Dict[str, Any]:
         return {
             "name": "Pixel Scenes",
-            "version": "0.3.0",
+            "version": "0.4.0",
             "active_scene": self.active_scene or "not selected",
             "scene_mode": self.scene_mode,
             "resolution": f"{self.width}x{self.height}",

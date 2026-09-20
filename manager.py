@@ -131,16 +131,16 @@ class PixelScenes(BasePlugin):
 
             now = time.time()
             t = (now - self.start_time) * self.animation_speed
-if self.active_scene == "lightning":
-    self._draw_lightning(t, now)
-elif self.active_scene == "arcade":
-    self._draw_arcade(t)
-elif self.active_scene == "mardi_gras":
-    self._draw_mardi_gras(t)
-elif self.active_scene == "american_flag":
-    self._draw_american_flag(t)
-else:
-    self._draw_synthwave(t)
+            if self.active_scene == "lightning":
+                self._draw_lightning(t, now)
+            elif self.active_scene == "arcade":
+                self._draw_arcade(t)
+            elif self.active_scene == "mardi_gras":
+                self._draw_mardi_gras(t)
+            elif self.active_scene == "american_flag":
+                self._draw_american_flag(t)
+            else:
+                self._draw_synthwave(t)
             self.display_manager.update_display()
             return True
 
@@ -495,7 +495,7 @@ else:
 
 
 
-   def get_display_duration(self):
+    def get_display_duration(self):
         return self.display_duration
 
     def validate_config(self) -> bool:
@@ -513,7 +513,7 @@ else:
     def get_info(self) -> Dict[str, Any]:
         return {
             "name": "Pixel Scenes",
-            "version": "0.2.0",
+            "version": "0.3.0",
             "active_scene": self.active_scene or "not selected",
             "scene_mode": self.scene_mode,
             "resolution": f"{self.width}x{self.height}",

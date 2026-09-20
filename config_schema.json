@@ -1,4 +1,6 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pixel Scenes Configuration",
   "type": "object",
   "properties": {
     "enabled": {
@@ -11,14 +13,14 @@
       "default": 20,
       "minimum": 5,
       "maximum": 300,
-      "description": "Seconds Pixel Scenes remains on screen"
+      "description": "How long to display the scene"
     },
     "animation_speed": {
       "type": "number",
       "default": 1.0,
       "minimum": 0.25,
       "maximum": 4.0,
-      "description": "Overall animation speed"
+      "description": "Animation speed multiplier"
     },
     "scene_mode": {
       "type": "string",
@@ -27,8 +29,8 @@
         "synthwave",
         "lightning",
         "arcade",
-        "mardi_gras"
-	"american_flag"
+        "mardi_gras",
+        "american_flag"
       ],
       "default": "random",
       "description": "Choose a specific scene or randomly select one each rotation"
@@ -52,15 +54,15 @@
       "type": "boolean",
       "default": true,
       "description": "Enable Mardi Gras"
-    }
+    },
     "enable_american_flag": {
       "type": "boolean",
       "default": true,
       "description": "Enable Animated American Flag"
-} 
-
-
- },
-  "required": ["enabled"],
+    }
+  },
+  "required": [
+    "enabled"
+  ],
   "additionalProperties": false
 }
